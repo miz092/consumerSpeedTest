@@ -21,9 +21,7 @@ public class TestConsumer {
 
         Properties properties = reader.getData(filePath);
 
-        topicName = properties.getProperty("topic.name");
-        pollFrequency = properties.getProperty("poll.frequency");
-        printConsumerConfig(properties);
+        topicName = properties.getProperty("topic");
 
         consumer = new KafkaConsumer<>(properties);
     }
@@ -49,26 +47,18 @@ public class TestConsumer {
         }
     }
 
-    public void printConsumerConfig(Properties properties) {
+    private void printConsumerConfiguration(Properties properties) {
         System.out.println("Kafka Consumer Configuration:");
-        System.out.println("bootstrap.servers: " + properties.getProperty("bootstrap.servers"));
-        System.out.println("key.deserializer: " + properties.getProperty("key.deserializer"));
-        System.out.println("value.deserializer: " + properties.getProperty("value.deserializer"));
-        System.out.println("group.id: " + properties.getProperty("group.id"));
-        System.out.println("auto.offset.reset: " + properties.getProperty("auto.offset.reset"));
-        System.out.println("fetch.min.bytes: " + properties.getProperty("fetch.min.bytes"));
-        System.out.println("fetch.max.bytes: " + properties.getProperty("fetch.max.bytes"));
-        System.out.println("max.poll.records: " + properties.getProperty("max.poll.records"));
-        System.out.println("max.poll.interval.ms: " + properties.getProperty("max.poll.interval.ms"));
-        System.out.println("fetch.max.wait.ms: " + properties.getProperty("fetch.max.wait.ms"));
-        System.out.println("**************************************************************************");
-        System.out.println("Kafka Topic Configuration:");
-        System.out.println("topic.name: " + properties.getProperty("topic.name"));
-        System.out.println("poll.frequency: " + properties.getProperty("poll.frequency"));
+        System.out.println("Bootstrap Server: " + properties.getProperty("bootstrapserver"));
+        System.out.println("Group ID: " + properties.getProperty("groupid"));
+        System.out.println("Offset Reset: " + properties.getProperty("offsetreset"));
+        System.out.println("Min Bytes: " + properties.getProperty("minbytes"));
+        System.out.println("Max Bytes: " + properties.getProperty("maxbytes"));
+        System.out.println("Max Poll Records: " + properties.getProperty("maxpoll"));
+        System.out.println("Max Poll Interval (ms): " + properties.getProperty("maxpollintervalms"));
+        System.out.println("Max Wait Time (ms): " + properties.getProperty("maxwaitms"));
+        System.out.println("Topic Name: " + properties.getProperty("topic"));
+        System.out.println("Poll Frequency (ms): " + properties.getProperty("pollFrequency"));
     }
+
 }
-
-
-
-
-
