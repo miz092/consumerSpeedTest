@@ -1,5 +1,7 @@
 package org.brickztech;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -8,6 +10,8 @@ import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 public class TestConsumer {
@@ -31,23 +35,35 @@ public class TestConsumer {
     void run() {
         Instant start = Instant.now();
         consumer.subscribe(Collections.singleton(topicName));
+        Map<String, Integer> appNameCounts = new HashMap<>();
         int counter = 0;
         try {
             while (true) {
                 ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(Long.parseLong(pollFrequency)));
                 for (ConsumerRecord<String, String> record : records) {
                     counter++;
+                    String jsonValue = record.value();
+
+                    JsonNode rootNode = new ObjectMapper().readTree(jsonValue);
+                    String appName = rootNode.path("APP_NAME").asText();
+
+                    appNameCounts.put(appName, appNameCounts.getOrDefault(appName, 0) + 1);
+                    System.out.println(appNameCounts);
+
                     if (counter % 10_000 == 0) {
                         Instant finish = Instant.now();
                         long timeElapsedSec = Duration.between(start, finish).toSeconds();
-                        System.out.println("RecordCount: " + counter + " in " + timeElapsedSec + "seconds");
+                        System.out.println("RecordCount: " + counter + " in " + timeElapsedSec + " seconds");
                     }
                 }
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         } finally {
             consumer.close();
         }
     }
+
 
     public void printConsumerConfig(Properties properties) {
         System.out.println("Kafka Consumer Configuration:");
