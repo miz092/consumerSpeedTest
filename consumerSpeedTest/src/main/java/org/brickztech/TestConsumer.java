@@ -45,7 +45,8 @@ public class TestConsumer {
                     String jsonValue = record.value();
 
                     JsonNode rootNode = new ObjectMapper().readTree(jsonValue);
-                    String appName = rootNode.path("APP_NAME").asText();
+                    JsonNode appNameNode = rootNode.get("APP_NAME");
+                    String appName = (appNameNode != null && !appNameNode.isNull()) ? appNameNode.asText() : "null";
 
                     appNameCounts.put(appName, appNameCounts.getOrDefault(appName, 0) + 1);
                     System.out.println(appNameCounts);
